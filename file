@@ -57,6 +57,7 @@ if submitted:
             "Date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "Nom": nom,
             "Prénom": prenom,
+            "sexe": sexe,
             "code postal":code_postal,
             "ville":ville,
             "numéro de rue":num_de_rue,
