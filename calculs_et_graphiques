@@ -1,28 +1,56 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from geopy.geocoders import Nominatim
 
 # ----------------------------
-# Configuration de la page
+# Données fictives (liste de listes)
+# ----------------------------
+data = [
+    ["Martin","Claire","Femme","75012","Paris","23","Rue de Reuilly","claire.martin@gmail.com","0612345678","Week-ends","Communication","Oui"],
+    ["Lefevre","Thomas","Homme","69007","Lyon","18","Rue Garibaldi","thomas.lefevre@outlook.fr","0789456123","Soirs de semaine","Logistique","Non"],
+    ["Dubois","Emile","Homme","31000","Toulouse","5","Rue du Taur","emma.dubois@yahoo.fr","0654789123","Vacances scolaires","Animation","Oui"],
+    ["Bernard","Lucas","Homme","44000","Nantes","42","Quai de la Fosse","lucas.bernard@live.fr","0778459632","Mercredis","Informatique","Oui"],
+    ["Petit","Julie","Femme","13005","Marseille","12","Boulevard Baille","julie.petit@gmail.com","0698453214","Soirs et week-ends","Comptabilité","Non"],
+    ["Moreau","Hugo","Homme","64000","Pau","9","Rue des Orfèvres","hugo.moreau@free.fr","0668459741","Samedis","Organisation d’événements","Oui"],
+    ["Girard","Léa","Femme","34000","Montpellier","27","Avenue Clémenceau","lea.girard@hotmail.com","0678451212","Vacances d’été","Animation enfants","Oui"],
+    ["Laurent","Mathilde","Femme","54000","Nancy","15","Rue Nationale","mathieu.laurent@gmail.com","0647895412","Week-ends","Bricolage","Non"],
+    ["Garcia","Chloé","Femme","75015","Paris","3","Rue Lecourbe","chloe.garcia@gmail.com","0665428741","Soirs","Graphisme","Oui"],
+    ["Rousseau","Julien","Homme","33000","Bordeaux","8","Cours Victor Hugo","julien.rousseau@orange.fr","0612458796","Dimanches","Photographie","Oui"],
+    ["Mercier","Camille","Femme","72000","Le Mans","24","Rue Gambetta","camille.mercier@gmail.com","0658412233","Soirs et samedis","Relations publiques","Oui"],
+    ["Dupont","Antoine","Homme","64000","Pau","19","Rue Serviez","antoine.dupont@yahoo.fr","0678459654","Samedis matin","Cuisine collective","Non"],
+    ["Faure","Manon","Femme","80000","Amiens","33","Rue Saint-Fuscien","manon.faure@gmail.com","0765123487","Week-ends","Accueil","Oui"],
+    ["Blanchard","Louise","Femme","75000","Paris","20","Rue Saint-Jean","louis.blanchard@live.fr","0654789632","Lundi soir","Gestion de projet","Oui"],
+    ["Lambert","Sarah","Femme","75000","Paris","17","Rue du Barachois","sarah.lambert@gmail.com","0692123456","Soirs de semaine","Couture","Non"],
+    ["Fontaine","Arthur","Homme","21000","Dijon","12","Rue Verrerie","arthur.fontaine@gmail.com","0689547412","Week-ends","Informatique","Oui"],
+    ["Chevalier","Anaïs","Femme","83000","Toulon","4","Avenue de la République","anais.chevalier@orange.fr","0645879632","Vacances","Danse","Oui"],
+    ["Gauthier","Nicole","Femme","38000","Grenoble","27","Rue Lesdiguières","nicolas.gauthier@gmail.com","0663214789","Soirs","Communication","Non"],
+    ["Morel","Elise","Femme","75000","Paris","31","Boulevard de la Liberté","elise.morel@gmail.com","0621548796","Samedis","Événementiel","Oui"],
+    ["Lefranc","Adrien","Homme","45000","Orléans","21","Rue Royale","adrien.lefranc@gmail.com","0754123689","Week-ends","Sport encadrement","Oui"],
+    ["Caron","Inès","Femme","54000","Nancy","10","Rue Saint-Georges","ines.caron@hotmail.fr","0689523147","Mercredis","Graphisme","Non"],
+    ["Roy","Quentin","Homme","80000","Amiens","7","Rue Jules-Barni","quentin.roy@gmail.com","0678124596","Soirs","Aide administrative","Oui"],
+    ["Robin","Lucie","Femme","69002","Lyon","5","Rue Mercière","lucie.robin@gmail.com","0698741254","Week-ends","Éducation","Oui"],
+    ["Colin","Ethan","Homme","64000","Pau","44","Rue Marca","ethan.colin@gmail.com","0789451236","Vacances","Jardinage","Non"],
+    ["Vidal","Jeanne","Femme","86000","Poitiers","18","Rue Magenta","jeanne.vidal@gmail.com","0678459988","Soirs et samedis","Chant","Oui"],
+    ["Guerin","Baptiste","Homme","13000","Marseille","26","Rue de la République","baptiste.guerin@gmail.com","0698456321","Week-ends","Mécanique","Oui"],
+    ["Noël","Clara","Femme","13000","Marseille","39","Rue Nationale","clara.noel@outlook.fr","0654789633","Dimanches","Cuisine","Non"],
+    ["Renaud","Victorine","Femme","59000","Lille","2","Rue du Molinel","victor.renaud@gmail.com","0645789965","Samedis","Musique","Oui"],
+    ["Marchand","Eva","Femme","69008","Lyon","25","Rue de l’Université","eva.marchand@gmail.com","0678452314","Soirs","Théâtre","Oui"],
+    ["Aubert","Maxine","Femme","31000","Toulouse","11","Rue de la Colombette","maxime.aubert@gmail.com","0659874123","Week-ends","Photographie","Non"]
+]
+
+# ----------------------------
+# Conversion en DataFrame
+# ----------------------------
+columns = ["Nom","Prénom","Sexe","Code postal","Ville","n° de rue","Rue","Email","Téléphone","Disponibilités","Compétences","Newsletter"]
+df = pd.DataFrame(data, columns=columns)
+
+# ----------------------------
+# Configuration de la page Streamlit
 # ----------------------------
 st.set_page_config(page_title="Analyse Bénévoles", page_icon="📊", layout="wide")
 
 st.title("📊 Analyse des bénévoles de l'association")
-st.write("Visualisation des données issues du fichier des bénévoles.")
-
-# ----------------------------
-# Chargement du fichier CSV
-# ----------------------------
-# 🔹 Mets ici le lien brut (raw) GitHub vers ton CSV :
-url = "benevoles_fictifs.csv"
-
-try:
-    df = pd.read_csv(url)
-    st.success("✅ Données chargées depuis GitHub !")
-except Exception as e:
-    st.error("⚠️ Impossible de charger le fichier CSV.")
-    st.stop()
+st.write("Visualisation des données issues du tableau interne des bénévoles.")
 
 # ----------------------------
 # Nettoyage et préparation
@@ -34,69 +62,49 @@ df["Sexe"] = df["Sexe"].str.strip().str.capitalize()
 # 1️⃣ Répartition hommes / femmes
 # ----------------------------
 st.subheader("👫 Répartition par sexe")
-
 sexe_counts = df["Sexe"].value_counts(normalize=True) * 100
 sexe_table = pd.DataFrame({
     "Sexe": sexe_counts.index,
-    "Pourcentage": sexe_counts.values.round(1)
-})
+    "Pourcentage": sexe_counts.values.round(0).astype(int)
 
+    
+})
 st.table(sexe_table)
 
-fig_sexe = px.pie(sexe_table, names="Sexe", values="Pourcentage", title="Répartition Hommes / Femmes", color_discrete_sequence=["#66c2a5","#fc8d62"])
+fig_sexe = px.pie(
+    sexe_table,
+    names="Sexe",
+    values="Pourcentage",
+    title="Répartition Hommes / Femmes",
+    color_discrete_sequence=["#66c2a5","#fc8d62"]
+)
 st.plotly_chart(fig_sexe, use_container_width=True)
 
 # ----------------------------
-# 2️⃣ Carte de France - concentration par ville
+# 2️⃣ Graphique : Nombre de bénévoles par ville
 # ----------------------------
-st.subheader("🗺️ Carte des bénévoles par ville")
+st.subheader("🏙️ Nombre de bénévoles par ville")
+ville_counts = df.groupby("Ville").size().reset_index(name="Nombre de bénévoles")
+ville_counts = ville_counts.sort_values(by="Nombre de bénévoles", ascending=False)
 
-# Comptage du nombre de bénévoles par ville
-ville_counts = df.groupby(["Ville", "Code postal"]).size().reset_index(name="Nombre de bénévoles")
-
-# Géocodage des villes (on garde un cache pour éviter les appels répétés)
-@st.cache_data
-def geocode_villes(villes):
-    geolocator = Nominatim(user_agent="benevoles_app")
-    coords = []
-    for ville in villes:
-        try:
-            location = geolocator.geocode(f"{ville}, France")
-            if location:
-                coords.append((ville, location.latitude, location.longitude))
-            else:
-                coords.append((ville, None, None))
-        except:
-            coords.append((ville, None, None))
-    return pd.DataFrame(coords, columns=["Ville", "lat", "lon"])
-
-# Ajout des coordonnées
-coords_df = geocode_villes(ville_counts["Ville"].unique())
-ville_geo = pd.merge(ville_counts, coords_df, on="Ville", how="left")
-
-# Suppression des villes non localisées
-ville_geo = ville_geo.dropna(subset=["lat", "lon"])
-
-# Affichage sur une carte interactive
-fig_map = px.scatter_mapbox(
-    ville_geo,
-    lat="lat",
-    lon="lon",
-    size="Nombre de bénévoles",
+fig_villes = px.bar(
+    ville_counts,
+    x="Ville",
+    y="Nombre de bénévoles",
+    text="Nombre de bénévoles",
     color="Nombre de bénévoles",
-    hover_name="Ville",
-    hover_data={"Code postal": True, "lat": False, "lon": False},
-    color_continuous_scale="Viridis",
-    size_max=40,
-    zoom=4,
-    mapbox_style="carto-positron",
-    title="Répartition géographique des bénévoles"
+    color_continuous_scale="Blues",
+    title="Nombre de bénévoles par ville"
 )
-
-st.plotly_chart(fig_map, use_container_width=True)
+fig_villes.update_layout(
+    xaxis_title="Ville",
+    yaxis_title="Nombre de bénévoles",
+    xaxis_tickangle=-45
+)
+st.plotly_chart(fig_villes, use_container_width=True)
 
 # ----------------------------
 # 3️⃣ Tableau résumé
 # ----------------------------
 st.subheader("📋 Détail des villes")
-st.dataframe(ville_geo[["Ville", "Code postal", "Nombre de bénévoles"]].sort_values("Nombre de bénévoles", ascending=False))
+st.dataframe(ville_counts)
