@@ -33,6 +33,10 @@ st.write("Merci de prendre quelques minutes pour remplir ce formulaire.")
 with st.form("formulaire_benevoles"):
     nom = st.text_input("Nom")
     prenom = st.text_input("Prénom")
+
+ # Nouvelle question : sexe de la personne
+    sexe = st.radio("Sexe", ["Homme", "Femme"])
+
     code_postal = st.text_input("code postal")
     ville = st.text_input("ville")
     num_de_rue = st.text_input("n° de rue")
