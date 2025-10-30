@@ -15,7 +15,7 @@ st.write("Visualisation des données issues du fichier des bénévoles.")
 # Chargement du fichier CSV
 # ----------------------------
 # 🔹 Mets ici le lien brut (raw) GitHub vers ton CSV :
-url = "https://raw.githubusercontent.com/ton-nom/ton-projet/main/benevoles_fictifs.csv"
+url = "benevoles_fictifs.csv"
 
 try:
     df = pd.read_csv(url)
